@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  news-db:
+image: postgres:14-alpine
+
+    container_name: news-aggregator-db
+
+    restart: always
+
+    environment:
+      POSTGRES_DB: news_aggregator
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysecretpassword
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+
+      - pgdata:/var/lib/postgresql/data
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+
+volumes:
+  pgdata:

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My sources</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Sources editing</h1>
+    <p>Choose up to 3 sources.</p>
+    <a th:href="@{/news}">Back to news</a>
+    <hr>
+
+    <h2>Your sources:</h2>
+    <div th:if="${userSources.isEmpty()}"><p>You dont have any sources.</p></div>
+    <ul class="keyword-list" th:unless="${userSources.isEmpty()}">
+        <li th:each="source : ${userSources}">
+            <span th:text="${source.name}">Source Name</span>
+            <form th:action="@{/sources/delete}" method="post" style="display: inline;">
+                <input type="hidden" name="id" th:value="${source.id}"/>
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
+
+
+        </li>
+    </ul>
+
+    <hr>
+
+    <h2>Add new source:</h2>
+    <div th:if="${maxSourcesError}" class="error-message" th:text="${maxSourcesError}"></div>
+    <form th:action="@{/sources/add}" method="post">
+        <div>
+            <label for="source-select">Choose source:</label>
+            <select name="apiSourceId" id="source-select" required>
+                <option value="">-- Choose from the list --</option>
+                <option th:each="source : ${availableSources}"
+                        th:value="${source.id}"
+                        th:text="${source.name}"></option>
+            </select>
+            <input type="hidden" name="sourceName" id="sourceNameInput"/>
+        </div>
+        <div>
+            <button type="submit">Add</button>
+        </div>
+    </form>
+</div>
+<script>
+    document.getElementById('source-select').addEventListener('change', function() {
+        var selectedOption = this.options[this.selectedIndex];
+        document.getElementById('sourceNameInput').value = selectedOption.text;
+    });
+</script>
+</body>
+</html>

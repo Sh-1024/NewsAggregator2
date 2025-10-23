@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>My keywords</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Keywords editing</h1>
+    <a th:href="@{/news}">Back to news</a>
+    <hr>
+
+    <h2>Your keywords:</h2>
+    <div th:if="${userKeywords.isEmpty()}">
+        <p>You done have a keywords.</p>
+    </div>
+    <ul class="keyword-list" th:unless="${userKeywords.isEmpty()}">
+        <li th:each="keyword : ${userKeywords}">
+            <span th:text="${keyword.name}">keyword</span>
+
+            <form th:action="@{/keywords/delete}" method="post" style="display: inline;">
+                <input type="hidden" name="id" th:value="${keyword.id}" />
+                <button type="submit" class="delete-btn">Delete</button>
+            </form>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h2>Add new keyword</h2>
+    <div th:if="${maxKeywordsError}" class="error-message" th:text="${maxKeywordsError}"></div>
+
+    <form th:action="@{/keywords/add}" th:object="${keywordDto}" method="post">
+        <div>
+            <label for="name">New keyword:</label>
+            <input type="text" id="name" th:field="*{name}" placeholder="for example, ai>
+            <div th:if="${#fields.hasErrors('name')}" class="field-error-message" th:errors="*{name}"></div>
+        </div>
+        <div>
+            <button type="submit">Add</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
+
+  

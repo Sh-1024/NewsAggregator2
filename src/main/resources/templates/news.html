@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>My news</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>My news</h1>
+    <div sec:authorize="isAuthenticated()" style="display: flex; justify-content: space-between; align-items: center;">
+        <p>User - <span sec:authentication="name"></span>!</p>
+        <div>
+            <a th:href="@{/keywords}" style="margin-right: 15px;">Keywords editing</a>
+            <a th:href="@{/sources}" style="margin-right: 15px;">Sources editing</a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div class="news-controls">
+        <a th:href="@{/news(page=${currentPage}, type='db')}"
+           th:classappend="${type == 'db' ? 'active' : ''}">Новости из БД</a>
+        <a th:href="@{/news(page=${currentPage}, type='api')}"
+           th:classappend="${type == 'api' ? 'active' : ''}">Новые новости (API)</a>
+    </div>
+
+    <div th:if="${news.isEmpty()}">
+        <p>No news.</p>
+    </div>
+
+    <div class="news-list">
+        <div th:each="item : ${news}" class="news-item">
+            <h2 th:text="${item.header}">Header</h2>
+            <p><strong>Source:</strong> <span th:text="${item.sourceName}">Source name</span></p>
+            <p><strong>Published:</strong> <span th:text="${#temporals.format(item.publishedAt, 'dd-MM-yyyy HH:mm')}"></span></p>
+            <p th:if="${!item.keywords.empty}">
+                <strong>Keywords:</strong> <span th:each="keyword : ${item.keywords}" th:text="${keyword + ' '}"></span>
+            </p>
+            <p><a th:href="${item.link}" target="_blank">Full article</a></p>
+        </div>
+    </div>
+
+    <div class="pagination" th:if="${totalPages > 0}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/news(page=${currentPage - 1}, type=${type})}">Previous</a>
+        <span th:text="${currentPage + 1}">1</span> из <span th:text="${totalPages}">1</span>
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/news(page=${currentPage + 1}, type=${type})}">Next</a>
+    </div>
+</div>
+</body>
+</html>
+
+  
