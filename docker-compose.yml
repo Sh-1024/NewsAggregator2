@@ -1,25 +1,29 @@
-version: '3.8'
-
 services:
-  news-db:
-image: postgres:14-alpine
-
-    container_name: news-aggregator-db
-
-    restart: always
-
+  newsaggregator:
+    build:  .
+    container_name: spring-boot-app
+    ports:
+      - "8080:8080"
     environment:
-      POSTGRES_DB: news_aggregator
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mysecretpassword
+      - POSTGRES_HOST=news-db
+      - POSTGRES_POST=5432
+      - POSTGRES_DB=news-db
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mysecretpassword
+    depends_on:
+      - news-db
 
+  news-db:
+    image: postgres:14-alpine
+    container_name: news-aggregator-db
     ports:
       - "5432:5432"
-
+    environment:
+      - POSTGRES_DB=news-db
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mysecretpassword
     volumes:
-
-      - pgdata:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
       - ./db-init-scripts:/docker-entrypoint-initdb.d
-
 volumes:
-  pgdata:
+  postgres-data:
